@@ -1,5 +1,7 @@
 #include <array>
 #include <utility>
+#include <vector>
+#include "struct.h"
 
 #pragma once
 
@@ -41,9 +43,19 @@ class Vec final {
     return result;
   }
 
+  friend void SerializeData(const Vec<T, size> &vec,
+                            std::vector<unsigned char> *out);
+
  private:
   std::array<T, size> data_;
 };
+
+template <typename T, size_t size>
+void SerializeData(const Vec<T, size> &vec, std::vector<unsigned char> *out) {
+  for (size_t i = 0; i < size; ++i) {
+    SerializeData(vec[i]);
+  }
+}
 
 template <typename T, size_t size>
 std::ostream &operator<<(std::ostream &os, const Vec<T, size> &v) {

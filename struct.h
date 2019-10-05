@@ -1,10 +1,12 @@
 #pragma once
 
+#include <algorithm>
 #include <ostream>
 #include <tuple>
 #include <type_traits>
 #include <vector>
 #include "macro.h"
+#include "serialization.h"
 
 // Define a member.
 #define PP_TUPLE_DEFINE_STRUCT_MEMBER_IMPL(type, name) \
@@ -57,6 +59,17 @@
     name::Unpack::ForEach(val, f);                                     \
     os << " }";                                                        \
     return os;                                                         \
+  }
+
+#define PP_TUPLE_DEFINE_OP_serialize(name)                     \
+  inline void SerializeData(const name &val,                   \
+                            std::vector<unsigned char> *out) { \
+    std::vector<unsigned char> result;                         \
+    auto f = [&](std::string_view, auto val) {                 \
+      using ::data::SerializeData;                             \
+      SerializeData(val, out);                                 \
+    };                                                         \
+    name::Unpack::ForEach(val, f);                             \
   }
 
 namespace tuple_define_struct {

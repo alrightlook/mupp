@@ -19,6 +19,7 @@ struct Mesh {
   );
 };
 PP_TUPLE_DEFINE_OP(Mesh, ostream);
+PP_TUPLE_DEFINE_OP(Mesh, serialize);
 
 struct Model {
   PP_TUPLE_DEFINE_STRUCT(          //
@@ -27,6 +28,7 @@ struct Model {
   );
 };
 PP_TUPLE_DEFINE_OP(Model, ostream);
+PP_TUPLE_DEFINE_OP(Model, serialize);
 
 Model LoadModel(std::string_view file_path);
 
