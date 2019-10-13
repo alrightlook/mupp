@@ -35,6 +35,17 @@ Image LoadOZB(std::string_view path) { return LoadImage(path, 4); }
 
 Image LoadOZT(std::string_view path) { return LoadImage(path, 4); }
 
+Image LoadImage(std::string_view path) {
+  if (util::CaseInsensitiveEndsWith(path, ".ozj")) {
+    return LoadOZJ(path);
+  } else if (util::CaseInsensitiveEndsWith(path, ".ozt")) {
+    return LoadOZT(path);
+  } else if (util::CaseInsensitiveEndsWith(path, ".ozb")) {
+    return LoadOZB(path);
+  }
+  return LoadImage(path, 0);
+}
+
 }  // namespace data
 
 namespace gl {

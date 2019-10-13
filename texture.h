@@ -1,7 +1,9 @@
 #pragma once
 
 #include <string_view>
+#include "error.h"
 #include "glad.h"
+#include "string.h"
 #include "struct.h"
 
 namespace data {
@@ -18,6 +20,20 @@ PP_TUPLE_DEFINE_OP(Image, ostream);
 Image LoadOZJ(std::string_view path);
 Image LoadOZB(std::string_view path);
 Image LoadOZT(std::string_view path);
+Image LoadImage(std::string_view path);
+
+inline std::string ImageToTextureExtension(std::string_view image_extension) {
+  if (util::CaseInsensitiveEndsWith(image_extension, ".jpg")) {
+    return ".ozj";
+  }
+  if (util::CaseInsensitiveEndsWith(image_extension, ".bmp")) {
+    return ".ozb";
+  }
+  if (util::CaseInsensitiveEndsWith(image_extension, ".tga")) {
+    return ".ozt";
+  }
+  throw util::InvalidArgumentException("unknown MU image extension ");
+}
 
 }  // namespace data
 
@@ -27,6 +43,7 @@ class Texture {
  public:
   Texture(const data::Image& image);
   Texture(const Texture& rhs) = delete;
+  Texture(Texture&& rhs) = default;
 
   ~Texture();
 

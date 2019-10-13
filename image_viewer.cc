@@ -77,17 +77,8 @@ int main(int argc, char *argv[]) {
   gl::ShaderProgram shader(kVertexShaderCode, kFragmentShaderCode);
 
   std::string_view image_path = argv[1];
-  std::unique_ptr<data::Image> image;
-  if (util::CaseInsensitiveEndsWith(image_path, ".ozj")) {
-    image = std::make_unique<data::Image>(data::LoadOZJ(image_path));
-  } else if (util::CaseInsensitiveEndsWith(image_path, ".ozt")) {
-    image = std::make_unique<data::Image>(data::LoadOZT(image_path));
-  } else if (util::CaseInsensitiveEndsWith(image_path, ".ozb")) {
-    image = std::make_unique<data::Image>(data::LoadOZB(image_path));
-  } else {
-    LOG(FATAL) << "Unknown image format for file " << image_path;
-  }
-  gl::Texture texture(*image);
+  data::Image image = data::LoadImage(image_path);
+  gl::Texture texture(image);
 
   data::Mesh rectangle_mesh = {
       {
@@ -117,13 +108,13 @@ int main(int argc, char *argv[]) {
   };
   gl::Renderable rectangle(rectangle_mesh);
 
-  size_t window_width = std::max(static_cast<size_t>(256), image->width);
-  size_t window_height = std::max(static_cast<size_t>(256), image->height);
+  size_t window_width = std::max(static_cast<size_t>(256), image.width);
+  size_t window_height = std::max(static_cast<size_t>(256), image.height);
   SDL_SetWindowSize(wnd, window_width, window_height);
-  size_t delta_width = window_width - image->width;
-  size_t delta_height = window_height - image->height;
-  glViewport(delta_width / 2, delta_height / 2, delta_width / 2 + image->width,
-             delta_height / 2 + image->height);
+  size_t delta_width = window_width - image.width;
+  size_t delta_height = window_height - image.height;
+  glViewport(delta_width / 2, delta_height / 2, delta_width / 2 + image.width,
+             delta_height / 2 + image.height);
 
   while (true) {
     SDL_Event event;
@@ -137,7 +128,7 @@ int main(int argc, char *argv[]) {
     }
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glClearColor(0.0, 0.0, 0.0, 1.0);
-    rectangle.Render(shader, texture, math::Mat4f::Identity(1.0f));
+    rectangle.Render(shader, texture, (1.0f));
     SDL_GL_SwapWindow(wnd);
   }
   return EXIT_SUCCESS;

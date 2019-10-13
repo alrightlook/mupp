@@ -22,3 +22,8 @@ add_executable(image_viewer image_viewer.cc gl.cc glad.c glad.h renderable.cc re
 target_link_libraries(image_viewer PRIVATE util)
 target_link_libraries(image_viewer PRIVATE SDL2::SDL2 SDL2::SDL2main)
 target_link_libraries(image_viewer PRIVATE GLEW::GLEW)
+
+add_executable(model_viewer model_viewer.cc gl.cc glad.c glad.h renderable.cc renderable.h texture.cc texture.h shader.cc shader.h bmd.cc bmd.h)
+target_link_libraries(model_viewer PRIVATE util)
+target_link_libraries(model_viewer PRIVATE SDL2::SDL2 SDL2::SDL2main)
+target_link_libraries(model_viewer PRIVATE GLEW::GLEW)

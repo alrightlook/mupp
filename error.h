@@ -13,6 +13,7 @@ enum class CanonicalErrorCode {
   kAborted,
   kNotFound,
   kUnimplemented,
+  kInvalidArgument,
 };
 
 std::string_view CanonicalErrorCodeName(CanonicalErrorCode code);
@@ -37,5 +38,7 @@ using AbortedException = CanonicalException<CanonicalErrorCode::kAborted>;
 using NotFoundException = CanonicalException<CanonicalErrorCode::kNotFound>;
 using UnimplementedException =
     CanonicalException<CanonicalErrorCode::kUnimplemented>;
+using InvalidArgumentException =
+    CanonicalException<CanonicalErrorCode::kInvalidArgument>;
 
 }  // namespace util
