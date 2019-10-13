@@ -5,6 +5,8 @@
 #include <iostream>
 #include <string_view>
 
+#include "absl/time/clock.h"
+#include "absl/time/time.h"
 #include "macro.h"
 
 namespace util {
@@ -25,11 +27,7 @@ class Log {
   }
 
  private:
-  static size_t TimeNow() {
-    return std::chrono::duration_cast<std::chrono::seconds>(
-               std::chrono::system_clock::now().time_since_epoch())
-        .count();
-  }
+  static int64_t TimeNow() { return absl::ToUnixSeconds(absl::Now()); }
   static std::string_view FileBasename(std::string_view file) {
     auto pos = file.find_last_of("\\/");
     if (pos == std::string_view::npos) {
