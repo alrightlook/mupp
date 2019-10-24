@@ -15,10 +15,12 @@
 inline constexpr std::string_view kDataPath =
     "C:/Users/pauls/Downloads/RosarioMu/data/";
 
+#ifdef _WIN32
 // TODO(paulherman): Disable for release.
 extern "C" {
 _declspec(dllexport) uint32_t NvOptimusEnablement = 0x00000001;
 }
+#endif
 
 int main(int argc, char *argv[]) {
   static_cast<void>(argc);

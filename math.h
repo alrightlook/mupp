@@ -147,7 +147,7 @@ std::ostream &operator<<(std::ostream &os, const Mat<T, size> &m) {
   os << "{";
   for (size_t row = 0; row < size; ++row) {
     if (row != 0) {
-      os << ", "
+      os << ", ";
     }
     os << "{";
     for (size_t col = 0; col < size; ++col) {
