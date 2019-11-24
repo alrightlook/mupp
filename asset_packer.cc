@@ -48,7 +48,7 @@ int main(int argc, char* argv[]) {
   std::unordered_map<std::string, std::vector<unsigned char>> assets;
   std::vector<std::string> paths = RecursivelyWalkDir(argv[1]);
   for (const std::string& path : paths) {
-    LOG(INFO) << "Loading " << path << '\n';
+    LOG(INFO) << "Loading " << path;
     assets.emplace(
         path, data::FileGetBinaryContents(absl::StrCat(argv[1], "/", path)));
   }
