@@ -1,4 +1,5 @@
 #include "gl.h"
+
 #include "error.h"
 #include "logging.h"
 

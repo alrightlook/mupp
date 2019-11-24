@@ -9,7 +9,6 @@ set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/third_party")
 find_package(glew REQUIRED)
 find_package(SDL2 CONFIG REQUIRED)
 find_package(absl CONFIG REQUIRED)
-find_package(leveldb CONFIG REQUIRED)
 
 add_library(util STATIC error.cc file.cc file.h cleanup.h error.h logging.h macro.h math.h string.h struct.h stb_image.h transformation.cc transformation.h serialization.cc serialization.h)
 target_link_libraries(util PRIVATE absl::base absl::time absl::span)
@@ -30,5 +29,4 @@ target_link_libraries(model_viewer PRIVATE SDL2::SDL2 SDL2::SDL2main)
 target_link_libraries(model_viewer PRIVATE GLEW::GLEW)
 
 add_executable(asset_packer asset_packer.cc)
-target_link_libraries(asset_packer PRIVATE util stdc++fs)
-
+target_link_libraries(asset_packer PRIVATE util absl::strings)

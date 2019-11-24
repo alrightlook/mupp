@@ -1,5 +1,7 @@
 #include "texture.h"
+
 #include <memory>
+
 #include "error.h"
 #include "file.h"
 #define STB_IMAGE_IMPLEMENTATION

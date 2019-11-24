@@ -1,6 +1,7 @@
 #include <algorithm>
 #include <cstdlib>
 #include <string_view>
+
 #include "SDL2/SDL.h"
 #include "bmd.h"
 #include "cleanup.h"

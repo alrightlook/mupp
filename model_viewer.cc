@@ -2,6 +2,7 @@
 #include <algorithm>
 #include <cstdlib>
 #include <string_view>
+
 #include "SDL2/SDL.h"
 #include "bmd.h"
 #include "cleanup.h"
@@ -15,14 +16,12 @@
 #include "texture.h"
 #include "transformation.h"
 
-
 int main(int argc, char *argv[]) {
   if (argc != 2) {
     LOG(FATAL) << "Usage: " << argv[0] << " <path>";
   }
   std::string_view model_path = argv[1];
   std::string_view data_dir = model_path;
-
 
   int sdl_init_err = SDL_Init(SDL_INIT_EVERYTHING);
   LOG_IF(FATAL, sdl_init_err != 0)

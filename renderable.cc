@@ -1,4 +1,5 @@
 #include "renderable.h"
+
 #include "gl.h"
 #include "logging.h"
 #include "math.h"

@@ -1,6 +1,8 @@
 #include "bmd.h"
+
 #include <cstring>
 #include <unordered_map>
+
 #include "error.h"
 #include "file.h"
 #include "string.h"
