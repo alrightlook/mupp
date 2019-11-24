@@ -1,10 +1,8 @@
 
 #include <algorithm>
 #include <cstdlib>
-#include <filesystem>
 #include <string_view>
 #include "SDL2/SDL.h"
-#include "asset.h"
 #include "bmd.h"
 #include "cleanup.h"
 #include "file.h"
@@ -17,21 +15,14 @@
 #include "texture.h"
 #include "transformation.h"
 
-#ifdef _WIN32
-// TODO(paulherman): Disable for release.
-extern "C" {
-_declspec(dllexport) uint32_t NvOptimusEnablement = 0x00000001;
-}
-#endif
-
-namespace fs = ::std::filesystem;
 
 int main(int argc, char *argv[]) {
   if (argc != 2) {
     LOG(FATAL) << "Usage: " << argv[0] << " <path>";
   }
-  fs::path model_path = argv[1];
-  fs::path data_dir = fs::path(model_path).remove_filename();
+  std::string_view model_path = argv[1];
+  std::string_view data_dir = model_path;
+
 
   int sdl_init_err = SDL_Init(SDL_INIT_EVERYTHING);
   LOG_IF(FATAL, sdl_init_err != 0)
@@ -56,16 +47,15 @@ int main(int argc, char *argv[]) {
   gl::Gl mygl;
   gl::ShaderProgram shader(gl::kVertexShaderCode, gl::kFragmentShaderCode);
 
-  data::Model model = data::LoadModel(model_path.string());
+  data::Model model = data::LoadModel(model_path);
 
   std::vector<gl::Renderable> renderables;
   std::vector<gl::Texture> textures;
   for (const data::Mesh &mesh : model.meshes) {
     renderables.emplace_back(mesh);
-    fs::path texture_path = data_dir / mesh.texture_path;
-    texture_path.replace_extension(
-        data::ImageToTextureExtension(texture_path.extension().string()));
-    textures.emplace_back(data::LoadImage(texture_path.string()));
+    std::string texture_path = "";
+    data::ImageToTextureExtension(texture_path);
+    textures.emplace_back(data::LoadImage(texture_path));
   }
 
   math::Vec3f rotatVion;

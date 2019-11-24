@@ -1,4 +1,5 @@
 #include "shader.h"
+#include <memory>
 #include "error.h"
 #include "logging.h"
 #include "string.h"

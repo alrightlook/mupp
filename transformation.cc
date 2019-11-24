@@ -33,22 +33,22 @@ math::Mat4f ScalingMatrix(float scale) {
 
 math::Mat4f RotationMatrix(const math::Vec3f& rotation) {
   math::Mat4f rotation_x(
-      math::Vec4f{1.0f, 0.0f, 0.0f, 0.0f},                           //
-      math::Vec4f{0.0f, cos(rotation[0]), -sin(rotation[0]), 0.0f},  //
-      math::Vec4f{0.0f, sin(rotation[0]), cos(rotation[0]), 0.0f},   //
-      math::Vec4f{0.0f, 0.0f, 0.0f, 1.0f}                            //
+      math::Vec4f{1.0f, 0.0f, 0.0f, 0.0f},                             //
+      math::Vec4f{0.0f, cosf(rotation[0]), -sinf(rotation[0]), 0.0f},  //
+      math::Vec4f{0.0f, sinf(rotation[0]), cosf(rotation[0]), 0.0f},   //
+      math::Vec4f{0.0f, 0.0f, 0.0f, 1.0f}                              //
   );
   math::Mat4f rotation_y(
-      math::Vec4f{cos(rotation[1]), 0.0f, sin(rotation[1]), 0.0f},   //
-      math::Vec4f{0.0f, 1.0f, 0.0f, 0.0f},                           //
-      math::Vec4f{-sin(rotation[1]), 0.0f, cos(rotation[1]), 0.0f},  //
-      math::Vec4f{0.0f, 0.0f, 0.0f, 1.0f}                            //
+      math::Vec4f{cosf(rotation[1]), 0.0f, sinf(rotation[1]), 0.0f},   //
+      math::Vec4f{0.0f, 1.0f, 0.0f, 0.0f},                             //
+      math::Vec4f{-sinf(rotation[1]), 0.0f, cosf(rotation[1]), 0.0f},  //
+      math::Vec4f{0.0f, 0.0f, 0.0f, 1.0f}                              //
   );
   math::Mat4f rotation_z(
-      math::Vec4f{cos(rotation[2]), -sin(rotation[2]), 0.0f, 0.0f},  //
-      math::Vec4f{sin(rotation[2]), cos(rotation[2]), 0.0f, 0.0f},   //
-      math::Vec4f{0.0f, 0.0f, 1.0f, 0.0f},                           //
-      math::Vec4f{0.0f, 0.0f, 0.0f, 1.0f}                            //
+      math::Vec4f{cosf(rotation[2]), -sinf(rotation[2]), 0.0f, 0.0f},  //
+      math::Vec4f{sinf(rotation[2]), cosf(rotation[2]), 0.0f, 0.0f},   //
+      math::Vec4f{0.0f, 0.0f, 1.0f, 0.0f},                             //
+      math::Vec4f{0.0f, 0.0f, 0.0f, 1.0f}                              //
   );
   return rotation_x * rotation_y * rotation_z;
 }

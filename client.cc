@@ -1,7 +1,6 @@
 #include <cstdlib>
 #include <string_view>
 #include "SDL2/SDL.h"
-#include "asset.h"
 #include "bmd.h"
 #include "cleanup.h"
 #include "gl.h"

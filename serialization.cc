@@ -1,12 +1,13 @@
 #include "serialization.h"
 
+#include <cstring>
+
 namespace data {
 
-void SerializeData(uint64_t num, std::vector<unsigned char>* out) {
-  unsigned char buf[4];
-  memcpy(buf, &num, sizeof(buf));
-  for (size_t i = 0; i < 4; ++i) {
-    out->push_back(buf[i]);
+void SerializeData(std::string_view str, std::vector<unsigned char> *out) {
+  SerializeData(str.size(), out);
+  for (char c : str) {
+    out->push_back(c);
   }
 }
 

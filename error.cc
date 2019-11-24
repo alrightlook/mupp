@@ -12,6 +12,8 @@ std::string_view CanonicalErrorCodeName(CanonicalErrorCode code) {
       return "Aborted";
     case CanonicalErrorCode::kNotFound:
       return "NotFound";
+    case CanonicalErrorCode::kInvalidArgument:
+      return "InvalidArgument";
     case CanonicalErrorCode::kUnimplemented:
       return "Unimplemented";
   }

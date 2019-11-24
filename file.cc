@@ -28,4 +28,14 @@ std::vector<unsigned char> FileGetBinaryContents(std::string_view path) {
   return result;
 }
 
+void FileSetBinaryContents(std::string_view path, const std::vector<unsigned char>& buf) {
+  std::ofstream f(path.data(), std::ios_base::out | std::ios_base::binary);
+  if (!f.is_open()) {
+    throw util::NotFoundException(util::StrCat("file not found: ", path));
+  }
+  for (unsigned char c : buf) {
+      f << c;
+  }
+}
+
 }  // namespace data

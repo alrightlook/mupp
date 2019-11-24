@@ -1,7 +1,9 @@
 #pragma once
 
+#include <cstring>
 #include <string_view>
 #include <type_traits>
+#include <unordered_map>
 #include <vector>
 
 namespace data {
@@ -32,6 +34,15 @@ void SerializeData(const std::vector<T> &vec, std::vector<unsigned char> *out) {
   SerializeData(vec.size(), out);
   for (const T &elem : vec) {
     SerializeData(elem, out);
+  }
+}
+
+template <typename K, typename V>
+void SerializeData(const std::unordered_map<K, V> &map, std::vector<unsigned char> *out) {
+  SerializeData(map.size(), out);
+  for (const auto &[k, v] : map) {
+    SerializeData(k, out);
+    SerializeData(v, out);
   }
 }
 

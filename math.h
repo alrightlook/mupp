@@ -168,7 +168,7 @@ namespace std {
 
 template <typename T, size_t size>
 struct hash<math::Vec<T, size>> {
-  size_t operator()(const ::math::Vec<T, size> &v) const {
+  size_t operator()(const math::Vec<T, size> &v) const {
     size_t result = 0;
     for (size_t i = 0; i < size; ++i) {
       result ^= v[i];
