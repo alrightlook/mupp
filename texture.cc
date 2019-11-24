@@ -12,8 +12,8 @@
 namespace data {
 namespace {
 
-Image LoadImage(std::string_view path, size_t skip_bytes) {
-  std::vector<unsigned char> raw = data::FileGetBinaryContents(path);
+Image LoadImage(const AssetStore& assets, std::string_view path, size_t skip_bytes) {
+  const std::vector<unsigned char>& raw = assets.GetBinaryData(path);
   int width, height, file_components;
   std::unique_ptr<unsigned char> pixels(
       stbi_load_from_memory(&raw[skip_bytes], raw.size() - skip_bytes, &width,
@@ -32,21 +32,21 @@ Image LoadImage(std::string_view path, size_t skip_bytes) {
 
 }  // namespace
 
-Image LoadOZJ(std::string_view path) { return LoadImage(path, 24); }
+Image LoadOZJ(const AssetStore& assets, std::string_view path) { return LoadImage(assets, path, 24); }
 
-Image LoadOZB(std::string_view path) { return LoadImage(path, 4); }
+Image LoadOZB(const AssetStore& assets, std::string_view path) { return LoadImage(assets, path, 4); }
 
-Image LoadOZT(std::string_view path) { return LoadImage(path, 4); }
+Image LoadOZT(const AssetStore& assets, std::string_view path) { return LoadImage(assets, path, 4); }
 
-Image LoadImage(std::string_view path) {
+Image LoadImage(const AssetStore& assets, std::string_view path) {
   if (util::CaseInsensitiveEndsWith(path, ".ozj")) {
-    return LoadOZJ(path);
+    return LoadOZJ(assets, path);
   } else if (util::CaseInsensitiveEndsWith(path, ".ozt")) {
-    return LoadOZT(path);
+    return LoadOZT(assets, path);
   } else if (util::CaseInsensitiveEndsWith(path, ".ozb")) {
-    return LoadOZB(path);
+    return LoadOZB(assets, path);
   }
-  return LoadImage(path, 0);
+  return LoadImage(assets, path, 0);
 }
 
 }  // namespace data

@@ -3,8 +3,10 @@
 #include <string_view>
 
 #include "SDL2/SDL.h"
+#include "asset.h"
 #include "bmd.h"
 #include "cleanup.h"
+#include "file.h"
 #include "gl.h"
 #include "logging.h"
 #include "math.h"
@@ -43,17 +45,12 @@ void main() {
 }
 )";
 
-#ifdef _WIN32
-// TODO(paulherman): Disable for release.
-extern "C" {
-_declspec(dllexport) uint32_t NvOptimusEnablement = 0x00000001;
-}
-#endif
-
 int main(int argc, char *argv[]) {
-  if (argc != 2) {
-    LOG(FATAL) << "Usage: " << argv[0] << " <path>";
+  if (argc != 3) {
+    LOG(FATAL) << "Usage: " << argv[0] << " <assets_path> <image>";
   }
+
+  data::AssetStore asset_store = data::AssetStore::LoadFromBinary(argv[1]);
 
   int sdl_init_err = SDL_Init(SDL_INIT_EVERYTHING);
   LOG_IF(FATAL, sdl_init_err != 0)
@@ -79,7 +76,7 @@ int main(int argc, char *argv[]) {
   gl::ShaderProgram shader(kVertexShaderCode, kFragmentShaderCode);
 
   std::string_view image_path = argv[1];
-  data::Image image = data::LoadImage(image_path);
+  data::Image image = data::LoadImage(asset_store, image_path);
   gl::Texture texture(image);
 
   data::Mesh rectangle_mesh = {

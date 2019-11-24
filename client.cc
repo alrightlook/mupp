@@ -2,6 +2,7 @@
 #include <string_view>
 
 #include "SDL2/SDL.h"
+#include "asset.h"
 #include "bmd.h"
 #include "cleanup.h"
 #include "gl.h"
@@ -12,19 +13,11 @@
 #include "string.h"
 #include "texture.h"
 
-inline constexpr std::string_view kDataPath =
-    "C:/Users/pauls/Downloads/RosarioMu/data/";
-
-#ifdef _WIN32
-// TODO(paulherman): Disable for release.
-extern "C" {
-_declspec(dllexport) uint32_t NvOptimusEnablement = 0x00000001;
-}
-#endif
-
 int main(int argc, char *argv[]) {
-  static_cast<void>(argc);
-  static_cast<void>(argv);
+  if (argc != 2) {
+    LOG(FATAL) << "Usage: " << argv[0] << " <assets_path>";
+  }
+  data::AssetStore asset_store = data::AssetStore::LoadFromBinary(argv[1]);
 
   int sdl_init_err = SDL_Init(SDL_INIT_EVERYTHING);
   LOG_IF(FATAL, sdl_init_err != 0)
@@ -50,13 +43,13 @@ int main(int argc, char *argv[]) {
   gl::ShaderProgram shader(gl::kVertexShaderCode, gl::kFragmentShaderCode);
 
   data::Model m =
-      data::LoadModel(util::StrCat(kDataPath, "Object1/Beer01.bmd"));
+      data::LoadModel(asset_store, "Object1/Beer01.bmd");
   std::vector<gl::Renderable> m_renderables;
   for (const data::Mesh &mesh : m.meshes) {
     m_renderables.emplace_back(mesh);
   }
 
-  data::Image i = data::LoadOZT(util::StrCat(kDataPath, "Object1/bottle.ozt"));
+  data::Image i = data::LoadOZT(asset_store, "Object1/bottle.ozt");
   gl::Texture t(i);
 
   while (true) {

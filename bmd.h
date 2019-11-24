@@ -3,6 +3,7 @@
 #include <string>
 #include <string_view>
 #include <vector>
+#include "asset.h"
 #include "math.h"
 #include "struct.h"
 
@@ -30,6 +31,6 @@ struct Model {
 PP_TUPLE_DEFINE_OP(Model, ostream);
 PP_TUPLE_DEFINE_OP(Model, serialize);
 
-Model LoadModel(std::string_view file_path);
+Model LoadModel(const AssetStore& assets, std::string_view file_path);
 
 };  // namespace data

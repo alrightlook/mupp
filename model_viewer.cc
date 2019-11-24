@@ -17,11 +17,10 @@
 #include "transformation.h"
 
 int main(int argc, char *argv[]) {
-  if (argc != 2) {
-    LOG(FATAL) << "Usage: " << argv[0] << " <path>";
+  if (argc != 3) {
+    LOG(FATAL) << "Usage: " << argv[0] << " <assets_path> <model>";
   }
-  std::string_view model_path = argv[1];
-  std::string_view data_dir = model_path;
+  data::AssetStore asset_store = data::AssetStore::LoadFromBinary(argv[1]);
 
   int sdl_init_err = SDL_Init(SDL_INIT_EVERYTHING);
   LOG_IF(FATAL, sdl_init_err != 0)
@@ -46,7 +45,7 @@ int main(int argc, char *argv[]) {
   gl::Gl mygl;
   gl::ShaderProgram shader(gl::kVertexShaderCode, gl::kFragmentShaderCode);
 
-  data::Model model = data::LoadModel(model_path);
+  data::Model model = data::LoadModel(asset_store, argv[2]);
 
   std::vector<gl::Renderable> renderables;
   std::vector<gl::Texture> textures;
@@ -54,7 +53,7 @@ int main(int argc, char *argv[]) {
     renderables.emplace_back(mesh);
     std::string texture_path = "";
     data::ImageToTextureExtension(texture_path);
-    textures.emplace_back(data::LoadImage(texture_path));
+    textures.emplace_back(data::LoadImage(asset_store, texture_path));
   }
 
   math::Vec3f rotatVion;

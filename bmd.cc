@@ -122,9 +122,9 @@ Mesh LoadMesh(RawInput* raw) {
 
 }  // namespace
 
-Model LoadModel(std::string_view file_path) {
+Model LoadModel(const AssetStore& assets, std::string_view file_path) {
   Model m;
-  RawInput raw = {data::FileGetBinaryContents(file_path), 0};
+  RawInput raw = {assets.GetBinaryData(file_path), 0};
 
   auto magic = Read<uint32_t>(&raw);
   switch (magic) {

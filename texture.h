@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string_view>
+#include "asset.h"
 #include "error.h"
 #include "glad.h"
 #include "string.h"
@@ -17,10 +18,10 @@ struct Image {
 };
 PP_TUPLE_DEFINE_OP(Image, ostream);
 
-Image LoadOZJ(std::string_view path);
-Image LoadOZB(std::string_view path);
-Image LoadOZT(std::string_view path);
-Image LoadImage(std::string_view path);
+Image LoadOZJ(const AssetStore& assets, std::string_view path);
+Image LoadOZB(const AssetStore& assets, std::string_view path);
+Image LoadOZT(const AssetStore& assets, std::string_view path);
+Image LoadImage(const AssetStore& assets, std::string_view path);
 
 inline std::string ImageToTextureExtension(std::string_view image_extension) {
   if (util::CaseInsensitiveEndsWith(image_extension, ".jpg")) {
