@@ -4,8 +4,6 @@ project(mupp)
 
 set(CMAKE_CXX_STANDARD 17)
 
-set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/third_party")
-
 find_package(glew REQUIRED)
 find_package(SDL2 CONFIG REQUIRED)
 find_package(absl CONFIG REQUIRED)
