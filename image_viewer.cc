@@ -16,7 +16,7 @@
 #include "texture.h"
 
 inline constexpr std::string_view kVertexShaderCode = R"(
-#version 330
+#version 330 core
 
 layout(location = 0) in vec3 position;
 layout(location = 1) in vec3 normal;
@@ -32,7 +32,7 @@ void main() {
 )";
 
 inline constexpr std::string_view kFragmentShaderCode = R"(
-#version 330
+#version 330 core
 
 in vec3 frag_position;
 in vec2 frag_texture_coord;
@@ -50,8 +50,6 @@ int main(int argc, char *argv[]) {
     LOG(FATAL) << "Usage: " << argv[0] << " <assets_path> <image>";
   }
 
-  data::AssetStore asset_store = data::AssetStore::LoadFromBinary(argv[1]);
-
   int sdl_init_err = SDL_Init(SDL_INIT_EVERYTHING);
   LOG_IF(FATAL, sdl_init_err != 0)
       << "failed to initialize SDL2: " << sdl_init_err;
@@ -64,18 +62,20 @@ int main(int argc, char *argv[]) {
   util::Cleanup cleanup_wnd([&]() { SDL_DestroyWindow(wnd); });
 
   SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
-  SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4);
-  SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 5);
+  SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
+  SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
   SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
   SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
   SDL_GLContext gl = SDL_GL_CreateContext(wnd);
   LOG_IF(FATAL, !gl) << "failed to create OpenGL context: " << SDL_GetError();
   util::Cleanup cleanup_gl([&]() { SDL_GL_DeleteContext(gl); });
 
+  data::AssetStore asset_store = data::AssetStore::LoadFromBinary(argv[1]);
+
   gl::Gl mygl;
   gl::ShaderProgram shader(kVertexShaderCode, kFragmentShaderCode);
 
-  std::string_view image_path = argv[1];
+  std::string_view image_path = argv[2];
   data::Image image = data::LoadImage(asset_store, image_path);
   gl::Texture texture(image);
 

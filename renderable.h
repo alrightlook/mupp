@@ -17,6 +17,9 @@ class Renderable {
   void Render(const ShaderProgram& shader, const Texture& texture,
               const math::Mat4f& transform) const;
 
+  void Bind() const;
+  void Unbind() const;
+
  private:
   GLuint vao_;
   std::array<GLuint, 5> vbos_;

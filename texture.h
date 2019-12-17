@@ -23,19 +23,6 @@ Image LoadOZB(const AssetStore& assets, std::string_view path);
 Image LoadOZT(const AssetStore& assets, std::string_view path);
 Image LoadImage(const AssetStore& assets, std::string_view path);
 
-inline std::string ImageToTextureExtension(std::string_view image_extension) {
-  if (util::CaseInsensitiveEndsWith(image_extension, ".jpg")) {
-    return ".ozj";
-  }
-  if (util::CaseInsensitiveEndsWith(image_extension, ".bmp")) {
-    return ".ozb";
-  }
-  if (util::CaseInsensitiveEndsWith(image_extension, ".tga")) {
-    return ".ozt";
-  }
-  throw util::InvalidArgumentException("unknown MU image extension ");
-}
-
 }  // namespace data
 
 namespace gl {
@@ -43,6 +30,7 @@ namespace gl {
 class Texture {
  public:
   Texture(const data::Image& image);
+  Texture() = delete;
   Texture(const Texture& rhs) = delete;
   Texture(Texture&& rhs) = default;
 

@@ -52,14 +52,11 @@ ShaderProgram::ShaderProgram(std::string_view vertex_shader_code,
     auto raw_name = std::make_unique<char[]>(max_name_len);
 
     for (GLint i = 0; i < num_uniforms; ++i) {
-      GLenum type = GL_NONE;
-      GLsizei name_length = 0;
-      GLsizei size = 0;
-      glGetActiveUniform(id_, i, max_name_len, &name_length, &size, &type,
-                         raw_name.get());
       UniformInfo uniform = {};
+      GLsizei name_length = 0;
+      glGetActiveUniform(id_, i, max_name_len, &name_length, &uniform.size,
+                         &uniform.type, raw_name.get());
       uniform.location = glGetUniformLocation(id_, raw_name.get());
-      uniform.size = size;
       std::string name(raw_name.get(), name_length);
       uniforms_[name] = uniform;
       LOG(INFO) << "Shader " << id_ << " has uniform " << name

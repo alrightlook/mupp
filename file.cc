@@ -4,6 +4,7 @@
 #include <ios>
 #include <iterator>
 
+#include "absl/strings/str_split.h"
 #include "error.h"
 
 namespace data {
@@ -39,6 +40,14 @@ void FileSetBinaryContents(std::string_view path,
   for (unsigned char c : buf) {
     f << c;
   }
+}
+
+std::string_view DirName(std::string_view path) {
+  std::vector<std::string_view> parts = absl::StrSplit(path, "/");
+  if (parts.size() < 2) {
+    return "";
+  }
+  return parts[parts.size() - 2];
 }
 
 }  // namespace data

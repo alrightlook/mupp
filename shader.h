@@ -48,6 +48,7 @@ void main() {
 struct UniformInfo {
   GLint location;
   GLsizei size;
+  GLenum type;
 };
 
 class ShaderProgram final {
@@ -60,6 +61,7 @@ class ShaderProgram final {
   void Unbind() const { glUseProgram(0); }
 
   const UniformInfo& GetUniform(std::string_view name) const;
+  void SetUniform(std::string_view name, float) const;
 
  private:
   std::unordered_map<std::string, UniformInfo> uniforms_;

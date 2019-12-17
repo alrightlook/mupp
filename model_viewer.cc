@@ -34,8 +34,8 @@ int main(int argc, char *argv[]) {
   util::Cleanup cleanup_wnd([&]() { SDL_DestroyWindow(wnd); });
 
   SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
-  SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4);
-  SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 5);
+  SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
+  SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
   SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
   SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
   SDL_GLContext gl = SDL_GL_CreateContext(wnd);
@@ -51,9 +51,9 @@ int main(int argc, char *argv[]) {
   std::vector<gl::Texture> textures;
   for (const data::Mesh &mesh : model.meshes) {
     renderables.emplace_back(mesh);
-    std::string texture_path = "";
-    data::ImageToTextureExtension(texture_path);
-    textures.emplace_back(data::LoadImage(asset_store, texture_path));
+    textures.emplace_back(data::LoadImage(
+        asset_store,
+        data::JoinPath(data::DirName(argv[2]), mesh.texture_path)));
   }
 
   math::Vec3f rotatVion;

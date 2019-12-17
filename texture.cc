@@ -1,10 +1,14 @@
 #include "texture.h"
 
+#include <map>
 #include <memory>
 
 #include "error.h"
 #include "file.h"
+#include "gl.h"
+#include "logging.h"
 #define STB_IMAGE_IMPLEMENTATION
+#include "absl/strings/str_replace.h"
 #include "glad.h"
 #include "stb_image.h"
 #include "string.h"
@@ -12,9 +16,11 @@
 namespace data {
 namespace {
 
-Image LoadImage(const AssetStore& assets, std::string_view path, size_t skip_bytes) {
+Image LoadImage(const AssetStore& assets, std::string_view path,
+                size_t skip_bytes) {
   const std::vector<unsigned char>& raw = assets.GetBinaryData(path);
   int width, height, file_components;
+  stbi_set_flip_vertically_on_load(1);
   std::unique_ptr<unsigned char> pixels(
       stbi_load_from_memory(&raw[skip_bytes], raw.size() - skip_bytes, &width,
                             &height, &file_components, 4));
@@ -32,19 +38,35 @@ Image LoadImage(const AssetStore& assets, std::string_view path, size_t skip_byt
 
 }  // namespace
 
-Image LoadOZJ(const AssetStore& assets, std::string_view path) { return LoadImage(assets, path, 24); }
+Image LoadOZJ(const AssetStore& assets, std::string_view path) {
+  return LoadImage(assets, path, 24);
+}
 
-Image LoadOZB(const AssetStore& assets, std::string_view path) { return LoadImage(assets, path, 4); }
+Image LoadOZB(const AssetStore& assets, std::string_view path) {
+  return LoadImage(assets, path, 4);
+}
 
-Image LoadOZT(const AssetStore& assets, std::string_view path) { return LoadImage(assets, path, 4); }
+Image LoadOZT(const AssetStore& assets, std::string_view path) {
+  return LoadImage(assets, path, 4);
+}
 
 Image LoadImage(const AssetStore& assets, std::string_view path) {
-  if (util::CaseInsensitiveEndsWith(path, ".ozj")) {
-    return LoadOZJ(assets, path);
-  } else if (util::CaseInsensitiveEndsWith(path, ".ozt")) {
-    return LoadOZT(assets, path);
-  } else if (util::CaseInsensitiveEndsWith(path, ".ozb")) {
-    return LoadOZB(assets, path);
+  std::map<std::string, std::string> extension_replacements = {
+      {".jpg", ".ozj"},
+      {".bmp", ".ozb"},
+      {".tga", ".ozt"},
+  };
+  std::string converted_path =
+      absl::StrReplaceAll(path, extension_replacements);
+  if (util::CaseInsensitiveEndsWith(path, ".ozj") ||
+      util::CaseInsensitiveEndsWith(path, ".jpg")) {
+    return LoadOZJ(assets, converted_path);
+  } else if (util::CaseInsensitiveEndsWith(path, ".ozt") ||
+             util::CaseInsensitiveEndsWith(path, ".tga")) {
+    return LoadOZT(assets, converted_path);
+  } else if (util::CaseInsensitiveEndsWith(path, ".ozb") ||
+             util::CaseInsensitiveEndsWith(path, ".bmp")) {
+    return LoadOZB(assets, converted_path);
   }
   return LoadImage(assets, path, 0);
 }
@@ -54,22 +76,22 @@ Image LoadImage(const AssetStore& assets, std::string_view path) {
 namespace gl {
 
 Texture::Texture(const data::Image& image) {
-  glCreateTextures(GL_TEXTURE_2D, 1, &id_);
+  glActiveTexture(GL_TEXTURE0);
+  glGenTextures(1, &id_);
+  gl::Bind bind(this);
 
-  glTextureParameteri(id_, GL_TEXTURE_WRAP_S, GL_CLAMP);
-  glTextureParameteri(id_, GL_TEXTURE_WRAP_T, GL_CLAMP);
-  glTextureParameteri(id_, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-  glTextureParameteri(id_, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 
-  glTextureStorage2D(id_, 1, GL_RGBA8, image.width, image.height);
-  glTextureSubImage2D(id_, 0, 0, 0, image.width, image.height, GL_RGBA,
-                      GL_UNSIGNED_BYTE, image.pixels.data());
+  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, image.width, image.height, 0, GL_RGBA,
+               GL_UNSIGNED_BYTE, image.pixels.data());
+  LOG(INFO) << "Created texture " << id_;
 }
 
 Texture::~Texture() { glDeleteTextures(1, &id_); }
 
-void Texture::Bind() const { glBindTextureUnit(0, id_); }
+void Texture::Bind() const { glBindTexture(GL_TEXTURE_2D, id_); }
 
-void Texture::Unbind() const { glBindTextureUnit(0, 0); }
+void Texture::Unbind() const { glBindTexture(GL_TEXTURE_2D, 0); }
 
 }  // namespace gl
