@@ -1,6 +1,7 @@
 #include "serialization.h"
 
 #include <cstring>
+#include "error.h"
 
 namespace data {
 
@@ -11,7 +12,8 @@ void SerializeData(std::string_view str, std::vector<unsigned char> *out) {
   }
 }
 
-absl::Span<const unsigned char> DeserializeData(absl::Span<const unsigned char> data, std::string* out) {
+absl::Span<const unsigned char> DeserializeData(
+    absl::Span<const unsigned char> data, std::string *out) {
   size_t size;
   data = DeserializeData(data, &size);
   out->resize(size);
@@ -22,3 +24,34 @@ absl::Span<const unsigned char> DeserializeData(absl::Span<const unsigned char> 
 }
 
 }  // namespace data
+
+namespace glm {
+
+void SerializeData(const glm::vec2 &vec, std::vector<unsigned char> *out) {
+  THROW_UNIMPLEMENTED_FUNCTION();
+}
+
+void SerializeData(const glm::vec3 &vec, std::vector<unsigned char> *out) {
+  THROW_UNIMPLEMENTED_FUNCTION();
+}
+
+void SerializeData(const glm::ivec3 &vec, std::vector<unsigned char> *out) {
+  THROW_UNIMPLEMENTED_FUNCTION();
+}
+
+absl::Span<const unsigned char> DeserializeData(
+    absl::Span<const unsigned char> data, const glm::vec2 &vec) {
+  THROW_UNIMPLEMENTED_FUNCTION();
+}
+
+absl::Span<const unsigned char> DeserializeData(
+    absl::Span<const unsigned char> data, const glm::vec3 &vec) {
+  THROW_UNIMPLEMENTED_FUNCTION();
+}
+
+absl::Span<const unsigned char> DeserializeData(
+    absl::Span<const unsigned char> data, const glm::ivec3 &vec) {
+  THROW_UNIMPLEMENTED_FUNCTION();
+}
+
+}  // namespace glm

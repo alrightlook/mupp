@@ -6,6 +6,7 @@
 #include "error.h"
 #include "file.h"
 #include "string.h"
+#include "glm/gtx/hash.hpp"
 
 namespace data {
 namespace {
@@ -54,24 +55,24 @@ void XorDecode(RawInput* input) {
 
 struct RawPosition {
   int32_t bone;
-  math::Vec3f v;
+  glm::vec3 v;
 };
 static_assert(sizeof(RawPosition) == 16);
 
 struct RawNormal {
   int32_t bone;
-  math::Vec3f v;
+  glm::vec3 v;
   unsigned char pad[4];
 };
 static_assert(sizeof(RawNormal) == 20);
 
 struct RawTriangle {
   unsigned char pad_0[2];
-  math::Vec<int16_t, 3> position_indices;
+  std::array<int16_t, 3> position_indices;
   unsigned char pad_1[2];
-  math::Vec<int16_t, 3> normal_indices;
+  std::array<int16_t, 3> normal_indices;
   unsigned char pad_2[2];
-  math::Vec<int16_t, 3> uv_indices;
+  std::array<int16_t, 3> uv_indices;
   unsigned char pad_3[40];
 };
 static_assert(sizeof(RawTriangle) == 64);
@@ -88,16 +89,16 @@ Mesh LoadMesh(RawInput* raw) {
   std::vector<RawPosition> raw_positions =
       Read<RawPosition>(raw, num_positions);
   std::vector<RawNormal> raw_normals = Read<RawNormal>(raw, num_normals);
-  std::vector<math::Vec2f> raw_uvs = Read<math::Vec2f>(raw, num_uvs);
+  std::vector<glm::vec2> raw_uvs = Read<glm::vec2>(raw, num_uvs);
   std::vector<RawTriangle> raw_triangles =
       Read<RawTriangle>(raw, num_triangles);
 
-  std::unordered_map<math::Vec3i, size_t> indices;
+  std::unordered_map<glm::ivec3, size_t> indices;
   for (const RawTriangle& raw_triangle : raw_triangles) {
     for (size_t i = 0; i < 3; ++i) {
-      math::Vec3i component_index(raw_triangle.position_indices[i],
-                                  raw_triangle.normal_indices[i],
-                                  raw_triangle.uv_indices[i]);
+      glm::ivec3 component_index(raw_triangle.position_indices[i],
+                                 raw_triangle.normal_indices[i],
+                                 raw_triangle.uv_indices[i]);
       auto it = indices.find(component_index);
       if (it == indices.end()) {
         indices[component_index] = res.positions.size();

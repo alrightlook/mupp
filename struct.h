@@ -6,6 +6,7 @@
 #include <tuple>
 #include <type_traits>
 #include <vector>
+#include "glm/glm.hpp"
 #include "macro.h"
 #include "serialization.h"
 
@@ -91,3 +92,19 @@ std::ostream &operator<<(std::ostream &os, const std::vector<T> &v) {
 }
 
 }  // namespace tuple_define_struct
+
+namespace glm {
+
+inline std::ostream &operator<<(std::ostream &os, const glm::vec2 &v) {
+  return os;
+}
+
+inline std::ostream &operator<<(std::ostream &os, const glm::vec3 &v) {
+  return os;
+}
+
+inline std::ostream &operator<<(std::ostream &os, const glm::ivec3 &v) {
+  return os;
+}
+
+}  // namespace glm

@@ -7,9 +7,9 @@
 #include "bmd.h"
 #include "cleanup.h"
 #include "file.h"
+#include "glm/glm.hpp"
 #include "gl.h"
 #include "logging.h"
-#include "math.h"
 #include "renderable.h"
 #include "shader.h"
 #include "string.h"
@@ -99,10 +99,7 @@ int main(int argc, char *argv[]) {
           {1.0f, 1.0f},
       },
       {-1, -1, -1, -1},
-      {
-          {1, 3, 2},
-          {1, 2, 0},
-      },
+      { 1, 3, 2, 1, 2, 0 },
       "texture.fake",
   };
   gl::Renderable rectangle(rectangle_mesh);
@@ -127,7 +124,7 @@ int main(int argc, char *argv[]) {
     }
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glClearColor(0.0, 0.0, 0.0, 1.0);
-    rectangle.Render(shader, texture, (1.0f));
+    rectangle.Render(shader, texture, glm::mat4());
     SDL_GL_SwapWindow(wnd);
   }
   return EXIT_SUCCESS;

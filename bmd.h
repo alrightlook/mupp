@@ -4,19 +4,20 @@
 #include <string_view>
 #include <vector>
 #include "asset.h"
+#include "glm/glm.hpp"
 #include "math.h"
 #include "struct.h"
 
 namespace data {
 
 struct Mesh {
-  PP_TUPLE_DEFINE_STRUCT(                     //
-      (std::vector<math::Vec3f>, positions),  //
-      (std::vector<math::Vec3f>, normals),    //
-      (std::vector<math::Vec2f>, uvs),        //
-      (std::vector<int32_t>, bones),          //
-      (std::vector<math::Vec3i>, triangles),  //
-      (std::string, texture_path)             //
+  PP_TUPLE_DEFINE_STRUCT(                    //
+      (std::vector<glm::vec3>, positions),   //
+      (std::vector<glm::vec3>, normals),     //
+      (std::vector<glm::vec2>, uvs),         //
+      (std::vector<int32_t>, bones),         //
+      (std::vector<int32_t>, triangles),  //
+      (std::string, texture_path)            //
   );
 };
 PP_TUPLE_DEFINE_OP(Mesh, ostream);

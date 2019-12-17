@@ -12,9 +12,9 @@
 #include "math.h"
 #include "renderable.h"
 #include "shader.h"
+#include "glm/gtc/matrix_transform.hpp"
 #include "string.h"
 #include "texture.h"
-#include "transformation.h"
 
 int main(int argc, char *argv[]) {
   if (argc != 3) {
@@ -56,10 +56,7 @@ int main(int argc, char *argv[]) {
         data::JoinPath(data::DirName(argv[2]), mesh.texture_path)));
   }
 
-  math::Vec3f rotatVion;
-  math::Vec3f translation;
-  math::Mat4f projection =
-      math::ProjectionMatrix(gl::AspectRatio(), 1.22173f, 0.1f, 1000.0f);
+  glm::mat4 projection = glm::perspective(60.0f, gl::AspectRatio(), 0.1f, 1000.0f);
 
   while (true) {
     SDL_Event event;

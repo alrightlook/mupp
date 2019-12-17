@@ -3,7 +3,7 @@
 #include <array>
 #include "bmd.h"
 #include "glad.h"
-#include "math.h"
+#include "glm/glm.hpp"
 #include "shader.h"
 #include "texture.h"
 
@@ -15,7 +15,7 @@ class Renderable {
   ~Renderable();
 
   void Render(const ShaderProgram& shader, const Texture& texture,
-              const math::Mat4f& transform) const;
+              const glm::mat4& transform) const;
 
   void Bind() const;
   void Unbind() const;

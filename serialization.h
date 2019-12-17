@@ -6,11 +6,13 @@
 #include <unordered_map>
 #include <vector>
 #include "absl/types/span.h"
+#include "glm/glm.hpp"
 
 namespace data {
 
 void SerializeData(std::string_view str, std::vector<unsigned char> *out);
-absl::Span<const unsigned char> DeserializeData(absl::Span<const unsigned char> data, std::string* out);
+absl::Span<const unsigned char> DeserializeData(
+    absl::Span<const unsigned char> data, std::string *out);
 
 template <typename Int, std::enable_if_t<std::is_integral_v<Int>, int> = 0>
 void SerializeData(Int num, std::vector<unsigned char> *out) {
@@ -22,7 +24,8 @@ void SerializeData(Int num, std::vector<unsigned char> *out) {
 }
 
 template <typename Int, std::enable_if_t<std::is_integral_v<Int>, int> = 0>
-absl::Span<const unsigned char> DeserializeData(absl::Span<const unsigned char> data, Int* out) {
+absl::Span<const unsigned char> DeserializeData(
+    absl::Span<const unsigned char> data, Int *out) {
   memcpy(out, data.data(), sizeof(Int));
   return data.subspan(sizeof(Int));
 }
@@ -46,7 +49,8 @@ void SerializeData(const std::vector<T> &vec, std::vector<unsigned char> *out) {
 }
 
 template <typename T>
-absl::Span<const unsigned char> DeserializeData(absl::Span<const unsigned char> data, std::vector<T>* out) {
+absl::Span<const unsigned char> DeserializeData(
+    absl::Span<const unsigned char> data, std::vector<T> *out) {
   size_t size;
   data = DeserializeData(data, &size);
   for (size_t i = 0; i < size; ++i) {
@@ -58,7 +62,8 @@ absl::Span<const unsigned char> DeserializeData(absl::Span<const unsigned char> 
 }
 
 template <typename K, typename V>
-void SerializeData(const std::unordered_map<K, V> &map, std::vector<unsigned char> *out) {
+void SerializeData(const std::unordered_map<K, V> &map,
+                   std::vector<unsigned char> *out) {
   SerializeData(map.size(), out);
   for (const auto &[k, v] : map) {
     SerializeData(k, out);
@@ -67,7 +72,8 @@ void SerializeData(const std::unordered_map<K, V> &map, std::vector<unsigned cha
 }
 
 template <typename K, typename V>
-absl::Span<const unsigned char> DeserializeData(absl::Span<const unsigned char> data, std::unordered_map<K, V>* out) {
+absl::Span<const unsigned char> DeserializeData(
+    absl::Span<const unsigned char> data, std::unordered_map<K, V> *out) {
   size_t size;
   data = DeserializeData(data, &size);
   for (size_t i = 0; i < size; ++i) {
@@ -81,3 +87,14 @@ absl::Span<const unsigned char> DeserializeData(absl::Span<const unsigned char> 
 }
 
 }  // namespace data
+
+namespace glm {
+
+void SerializeData(const glm::vec2 &vec, std::vector<unsigned char> *out);
+void SerializeData(const glm::vec3 &vec, std::vector<unsigned char> *out);
+void SerializeData(const glm::ivec3 &vec, std::vector<unsigned char> *out);
+void DeserializeData(const glm::vec2 &vec, std::vector<unsigned char> *out);
+void DeserializeData(const glm::vec3 &vec, std::vector<unsigned char> *out);
+void DeserializeData(const glm::ivec3 &vec, std::vector<unsigned char> *out);
+
+}  // namespace glm

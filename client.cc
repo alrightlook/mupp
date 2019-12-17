@@ -7,11 +7,11 @@
 #include "cleanup.h"
 #include "gl.h"
 #include "logging.h"
-#include "math.h"
 #include "renderable.h"
 #include "shader.h"
 #include "string.h"
 #include "texture.h"
+#include "glm/glm.hpp"
 
 int main(int argc, char *argv[]) {
   if (argc != 2) {
@@ -65,7 +65,7 @@ int main(int argc, char *argv[]) {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glClearColor(0.0, 0.0, 0.0, 1.0);
     for (const gl::Renderable &r : m_renderables) {
-      r.Render(shader, t, math::Mat4f::Identity(1.0f));
+      r.Render(shader, t, glm::mat3());
     }
     SDL_GL_SwapWindow(wnd);
   }

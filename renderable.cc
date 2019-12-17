@@ -2,8 +2,8 @@
 
 #include "absl/strings/str_join.h"
 #include "gl.h"
+#include "glm/glm.hpp"
 #include "logging.h"
-#include "math.h"
 #include "texture.h"
 
 namespace gl {
@@ -21,7 +21,7 @@ enum class Vbo : int {
 Renderable::Renderable(const data::Mesh& mesh)
     : vao_(0),
       vbos_({0, 0, 0, 0, 0}),
-      num_vertices_(mesh.triangles.size() * 3) {
+      num_vertices_(mesh.triangles.size()) {
   glGenVertexArrays(1, &vao_);
   GL_CHECK_ERROR();
 
@@ -31,7 +31,7 @@ Renderable::Renderable(const data::Mesh& mesh)
 
   glEnableVertexAttribArray(static_cast<int>(Vbo::kPosition));
   glBindBuffer(GL_ARRAY_BUFFER, vbos_[static_cast<int>(Vbo::kPosition)]);
-  glBufferData(GL_ARRAY_BUFFER, sizeof(math::Vec3f) * mesh.positions.size(),
+  glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec3) * mesh.positions.size(),
                mesh.positions.data(), GL_STATIC_DRAW);
   glVertexAttribPointer(static_cast<int>(Vbo::kPosition), 3, GL_FLOAT, GL_FALSE,
                         0, 0);
@@ -39,7 +39,7 @@ Renderable::Renderable(const data::Mesh& mesh)
 
   glEnableVertexAttribArray(static_cast<int>(Vbo::kNormal));
   glBindBuffer(GL_ARRAY_BUFFER, vbos_[static_cast<int>(Vbo::kNormal)]);
-  glBufferData(GL_ARRAY_BUFFER, sizeof(math::Vec3f) * mesh.normals.size(),
+  glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec3) * mesh.normals.size(),
                mesh.normals.data(), GL_STATIC_DRAW);
   glVertexAttribPointer(static_cast<int>(Vbo::kNormal), 3, GL_FLOAT,
                         /*normalized=*/GL_FALSE, 0, 0);
@@ -47,7 +47,7 @@ Renderable::Renderable(const data::Mesh& mesh)
 
   glEnableVertexAttribArray(static_cast<int>(Vbo::kTextureCoord));
   glBindBuffer(GL_ARRAY_BUFFER, vbos_[static_cast<int>(Vbo::kTextureCoord)]);
-  glBufferData(GL_ARRAY_BUFFER, sizeof(math::Vec2f) * mesh.uvs.size(),
+  glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec2) * mesh.uvs.size(),
                mesh.uvs.data(), GL_STATIC_DRAW);
   glVertexAttribPointer(static_cast<int>(Vbo::kTextureCoord), 2, GL_FLOAT,
                         GL_FALSE, 0, 0);
@@ -62,7 +62,7 @@ Renderable::Renderable(const data::Mesh& mesh)
   // The indices buffer is stored in the VAO so we don't unbind.
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vbos_[static_cast<int>(Vbo::kIndex)]);
   glBufferData(GL_ELEMENT_ARRAY_BUFFER,
-               sizeof(math::Vec3i) * mesh.triangles.size(),
+               sizeof(glm::ivec3) * mesh.triangles.size(),
                mesh.triangles.data(), GL_STATIC_DRAW);
   GL_CHECK_ERROR();
 
@@ -73,7 +73,7 @@ Renderable::Renderable(const data::Mesh& mesh)
 Renderable::~Renderable() {}
 
 void Renderable::Render(const ShaderProgram& shader, const Texture& texture,
-                        const math::Mat4f& transform) const {
+                        const glm::mat4& transform) const {
   gl::Bind bind_shader(&shader);
   gl::Bind bind_texture(&texture);
   gl::Bind bind_vao(this);

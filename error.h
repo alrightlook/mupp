@@ -41,4 +41,6 @@ using UnimplementedException =
 using InvalidArgumentException =
     CanonicalException<CanonicalErrorCode::kInvalidArgument>;
 
+#define THROW_UNIMPLEMENTED_FUNCTION() throw ::util::UnimplementedException(__func__)
+
 }  // namespace util
