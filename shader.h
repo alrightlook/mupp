@@ -3,6 +3,7 @@
 #include <string>
 #include <string_view>
 #include <unordered_map>
+#include "absl/strings/str_cat.h"
 #include "glad.h"
 
 namespace gl {
@@ -55,6 +56,9 @@ class ShaderProgram final {
  public:
   ShaderProgram(std::string_view vertex_shader_code,
                 std::string_view fragment_shader_code);
+  ShaderProgram() = delete;
+  ShaderProgram(const ShaderProgram&) = delete;
+  ShaderProgram(ShaderProgram&&);
   ~ShaderProgram();
 
   void Bind() const { glUseProgram(id_); }
@@ -62,6 +66,8 @@ class ShaderProgram final {
 
   const UniformInfo& GetUniform(std::string_view name) const;
   void SetUniform(std::string_view name, float) const;
+
+  std::string DebugString() const { return absl::StrCat("Shader ", id_); }
 
  private:
   std::unordered_map<std::string, UniformInfo> uniforms_;

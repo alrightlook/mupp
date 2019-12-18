@@ -76,7 +76,6 @@ Image LoadImage(const AssetStore& assets, std::string_view path) {
 namespace gl {
 
 Texture::Texture(const data::Image& image) {
-  glActiveTexture(GL_TEXTURE0);
   glGenTextures(1, &id_);
   gl::Bind bind(this);
 
@@ -88,7 +87,17 @@ Texture::Texture(const data::Image& image) {
   LOG(INFO) << "Created texture " << id_;
 }
 
-Texture::~Texture() { glDeleteTextures(1, &id_); }
+Texture::Texture(Texture&& rhs) : id_(rhs.id_) {
+  rhs.id_ = 0;
+}
+
+Texture::~Texture() {
+  if (id_ == 0) {
+    return;
+  }
+  glDeleteTextures(1, &id_);
+  LOG(INFO) << "Deleted texture " << id_;
+ }
 
 void Texture::Bind() const { glBindTexture(GL_TEXTURE_2D, id_); }
 

@@ -65,12 +65,22 @@ ShaderProgram::ShaderProgram(std::string_view vertex_shader_code,
   }
 }
 
+ShaderProgram::ShaderProgram(ShaderProgram&& rhs) : id_(rhs.id_),vertex_shader_id_(rhs.vertex_shader_id_), fragment_shader_id_(rhs.fragment_shader_id_) {
+  rhs.id_ = 0;
+  rhs.vertex_shader_id_ = 0;
+  rhs.fragment_shader_id_ = 0;
+}
+
 ShaderProgram::~ShaderProgram() {
+  if (id_ == 0) {
+    return;
+  }
   glDetachShader(id_, fragment_shader_id_);
   glDetachShader(id_, vertex_shader_id_);
   glDeleteShader(fragment_shader_id_);
   glDeleteShader(vertex_shader_id_);
   glDeleteProgram(id_);
+  LOG(INFO) << "Deleting shader " << id_;
 }
 
 const UniformInfo& ShaderProgram::GetUniform(std::string_view name) const {

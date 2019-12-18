@@ -8,8 +8,32 @@
 #include "absl/time/clock.h"
 #include "absl/time/time.h"
 #include "macro.h"
+#include "null_stream.h"
 
 namespace util {
+
+template <typename T>
+class HasDebugString {
+  using Yes = char[2];
+  using No = char[1];
+
+  template <typename C>
+  static Yes &Test(decltype(&C::DebugString));
+  template <typename C>
+  static No &Test(...);
+
+ public:
+  enum { Value = sizeof(Test<T>(0)) == sizeof(Yes) };
+};
+
+template <typename T>
+std::string DebugStringOrEmpty(const T &data) {
+  if constexpr (HasDebugString<T>::Value) {
+    return data.DebugString();
+  } else {
+    return "<no debug info>";
+  }
+}
 
 class Log {
  public:
@@ -25,6 +49,7 @@ class Log {
     return (std::clog << "\nW" << TimeNow() << ":" << FileBasename(file) << ":"
                       << line << " ");
   }
+  static std::ostream &Debug(std::string_view file, size_t line);
 
  private:
   static int64_t TimeNow() { return absl::ToUnixSeconds(absl::Now()); }
@@ -37,6 +62,7 @@ class Log {
   }
 };
 
+#define LOG_DEBUG ::util::Log::Debug
 #define LOG_INFO ::util::Log::Info
 #define LOG_ERROR ::util::Log::Error
 #define LOG_WARNING ::util::Log::Warning

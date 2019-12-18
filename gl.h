@@ -10,9 +10,11 @@
 #pragma once
 
 namespace gl {
+namespace internal {
 
-#define GL_CHECK_ERROR() ::gl::CheckError("", __FILE__, __LINE__)
-#define GL_CHECK_ERROR_MSG(msg) ::gl::CheckError(msg, __FILE__, __LINE__)
+#define GL_CHECK_ERROR() ::gl::internal::CheckError("", __FILE__, __LINE__)
+#define GL_CHECK_ERROR_MSG(msg) \
+  ::gl::internal::CheckError((msg), __FILE__, __LINE__)
 
 inline void CheckError(std::string_view message, std::string_view file,
                        size_t line) {
@@ -22,16 +24,20 @@ inline void CheckError(std::string_view message, std::string_view file,
   }
 }
 
+}  // namespace internal
+
 template <typename T>
 class Bind final {
  public:
   Bind(const T* resource) : resource_(resource) {
+    LOG(DEBUG) << "Binding " << util::DebugStringOrEmpty(*resource_);
     resource_->Bind();
-    GL_CHECK_ERROR();
+    GL_CHECK_ERROR_MSG(util::DebugStringOrEmpty(*resource_));
   }
   ~Bind() {
+    LOG(DEBUG) << "Unbinding " << util::DebugStringOrEmpty(*resource_);
     resource_->Unbind();
-    GL_CHECK_ERROR();
+    GL_CHECK_ERROR_MSG(util::DebugStringOrEmpty(*resource_));
   }
 
  private:

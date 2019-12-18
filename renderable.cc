@@ -19,9 +19,7 @@ enum class Vbo : int {
 }
 
 Renderable::Renderable(const data::Mesh& mesh)
-    : vao_(0),
-      vbos_({0, 0, 0, 0, 0}),
-      num_vertices_(mesh.triangles.size()) {
+    : vao_(0), vbos_({0, 0, 0, 0, 0}), num_vertices_(mesh.triangles.size()) {
   glGenVertexArrays(1, &vao_);
   GL_CHECK_ERROR();
 
@@ -70,7 +68,23 @@ Renderable::Renderable(const data::Mesh& mesh)
             << absl::StrJoin(vbos_, ", ");
 }
 
-Renderable::~Renderable() {}
+  Renderable::Renderable(Renderable&& rhs) : vao_(std::move(rhs.vao_)), vbos_(rhs.vbos_), num_vertices_(rhs.num_vertices_) {
+    rhs.vao_ = 0;
+    for (GLuint& vbo : rhs.vbos_) {
+      vbo = 0;
+    }
+    rhs.num_vertices_ = 0;
+  }
+
+Renderable::~Renderable() {
+  if (vao_ == 0) {
+    return;
+  }
+  glDeleteBuffers(static_cast<GLsizei>(vbos_.size()), vbos_.data());
+  glDeleteVertexArrays(1, &vao_);
+  GL_CHECK_ERROR();
+  LOG(INFO) << "Deleted VAO " << vao_;
+}
 
 void Renderable::Render(const ShaderProgram& shader, const Texture& texture,
                         const glm::mat4& transform) const {

@@ -4,23 +4,30 @@
 #include <string_view>
 
 #include "SDL2/SDL.h"
+#include "absl/flags/flag.h"
+#include "absl/flags/parse.h"
 #include "bmd.h"
 #include "cleanup.h"
 #include "file.h"
 #include "gl.h"
+#include "glm/gtc/matrix_transform.hpp"
 #include "logging.h"
 #include "math.h"
 #include "renderable.h"
 #include "shader.h"
-#include "glm/gtc/matrix_transform.hpp"
 #include "string.h"
 #include "texture.h"
 
+ABSL_FLAG(std::string, assets_path, "", "Path to the assets store.");
+ABSL_FLAG(std::string, model, "", "Which model to render.");
+
 int main(int argc, char *argv[]) {
-  if (argc != 3) {
-    LOG(FATAL) << "Usage: " << argv[0] << " <assets_path> <model>";
-  }
-  data::AssetStore asset_store = data::AssetStore::LoadFromBinary(argv[1]);
+  absl::ParseCommandLine(argc, argv);
+  LOG(DEBUG) << "Assets: " <<absl::GetFlag(FLAGS_assets_path);
+  LOG(DEBUG) << "Model: " << absl::GetFlag(FLAGS_model);
+
+  data::AssetStore asset_store =
+      data::AssetStore::LoadFromBinary(absl::GetFlag(FLAGS_assets_path));
 
   int sdl_init_err = SDL_Init(SDL_INIT_EVERYTHING);
   LOG_IF(FATAL, sdl_init_err != 0)
@@ -45,7 +52,7 @@ int main(int argc, char *argv[]) {
   gl::Gl mygl;
   gl::ShaderProgram shader(gl::kVertexShaderCode, gl::kFragmentShaderCode);
 
-  data::Model model = data::LoadModel(asset_store, argv[2]);
+  data::Model model = data::LoadModel(asset_store, absl::GetFlag(FLAGS_model));
 
   std::vector<gl::Renderable> renderables;
   std::vector<gl::Texture> textures;
@@ -53,10 +60,11 @@ int main(int argc, char *argv[]) {
     renderables.emplace_back(mesh);
     textures.emplace_back(data::LoadImage(
         asset_store,
-        data::JoinPath(data::DirName(argv[2]), mesh.texture_path)));
+        data::JoinPath(data::DirName(absl::GetFlag(FLAGS_model)), mesh.texture_path)));
   }
 
-  glm::mat4 projection = glm::perspective(60.0f, gl::AspectRatio(), 0.1f, 1000.0f);
+  glm::mat4 projection =
+      glm::perspective(60.0f, gl::AspectRatio(), 0.1f, 1000.0f);
 
   while (true) {
     SDL_Event event;

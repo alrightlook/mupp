@@ -1,6 +1,7 @@
 #pragma once
 
 #include <array>
+#include "absl/strings/str_cat.h"
 #include "bmd.h"
 #include "glad.h"
 #include "glm/glm.hpp"
@@ -12,6 +13,9 @@ namespace gl {
 class Renderable {
  public:
   Renderable(const data::Mesh& mesh);
+  Renderable() = delete;
+  Renderable(const Renderable&) = delete;
+  Renderable(Renderable&& rhs);
   ~Renderable();
 
   void Render(const ShaderProgram& shader, const Texture& texture,
@@ -19,6 +23,8 @@ class Renderable {
 
   void Bind() const;
   void Unbind() const;
+
+  std::string DebugString() const { return absl::StrCat("VAO ", vao_); }
 
  private:
   GLuint vao_;

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string_view>
+#include "absl/strings/str_cat.h"
 #include "asset.h"
 #include "error.h"
 #include "glad.h"
@@ -31,13 +32,15 @@ class Texture {
  public:
   Texture(const data::Image& image);
   Texture() = delete;
-  Texture(const Texture& rhs) = delete;
-  Texture(Texture&& rhs) = default;
+  Texture(const Texture&) = delete;
+  Texture(Texture&& rhs);
 
   ~Texture();
 
   void Bind() const;
   void Unbind() const;
+
+  std::string DebugString() const { return absl::StrCat("Texture ", id_); }
 
  private:
   GLuint id_;
