@@ -5,6 +5,7 @@
 #include <unordered_map>
 #include "absl/strings/str_cat.h"
 #include "glad.h"
+#include "glm/glm.hpp"
 
 namespace gl {
 
@@ -20,11 +21,13 @@ out vec3 frag_position;
 out vec3 frag_normal;
 out vec2 frag_texture_coord;
 
-uniform mat4 transformation;
+uniform mat4 model;
+uniform mat4 projection;
+uniform mat4 view;
 uniform mat4 bone_transformations[32];
 
 void main() {
-  gl_Position = transformation * vec4(position, 1.0);
+  gl_Position = projection * view * model * vec4(position, 1.0);
   frag_normal = normal;
   frag_texture_coord = texture_coord;
 }
@@ -64,8 +67,7 @@ class ShaderProgram final {
   void Bind() const { glUseProgram(id_); }
   void Unbind() const { glUseProgram(0); }
 
-  const UniformInfo& GetUniform(std::string_view name) const;
-  void SetUniform(std::string_view name, float) const;
+  void SetUniform(std::string_view name, glm::mat4) const;
 
   std::string DebugString() const { return absl::StrCat("Shader ", id_); }
 

@@ -9,7 +9,7 @@ find_package(SDL2 CONFIG REQUIRED)
 find_package(absl CONFIG REQUIRED)
 find_package(glm CONFIG REQUIRED)
 
-add_library(util STATIC error.cc file.cc file.h cleanup.h error.h logging.cc logging.h macro.h string.h struct.h stb_image.h serialization.cc serialization.h asset.cc asset.h null_stream.h)
+add_library(util STATIC error.cc file.cc file.h cleanup.h error.h logging.cc logging.h macro.h string.h struct.h stb_image.h serialization.cc serialization.h asset.cc asset.h null_stream.h ticker.h)
 target_link_libraries(util PUBLIC absl::base absl::time absl::span absl::strings absl::flags glm)
 
 add_library(rendering STATIC gl.cc gl.h glad.c glad.h renderable.cc renderable.h texture.cc texture.h shader.cc shader.h)

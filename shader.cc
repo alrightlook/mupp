@@ -3,6 +3,7 @@
 #include <memory>
 
 #include "error.h"
+#include "glm/gtc/type_ptr.hpp"
 #include "logging.h"
 #include "string.h"
 
@@ -65,7 +66,10 @@ ShaderProgram::ShaderProgram(std::string_view vertex_shader_code,
   }
 }
 
-ShaderProgram::ShaderProgram(ShaderProgram&& rhs) : id_(rhs.id_),vertex_shader_id_(rhs.vertex_shader_id_), fragment_shader_id_(rhs.fragment_shader_id_) {
+ShaderProgram::ShaderProgram(ShaderProgram&& rhs)
+    : id_(rhs.id_),
+      vertex_shader_id_(rhs.vertex_shader_id_),
+      fragment_shader_id_(rhs.fragment_shader_id_) {
   rhs.id_ = 0;
   rhs.vertex_shader_id_ = 0;
   rhs.fragment_shader_id_ = 0;
@@ -83,12 +87,27 @@ ShaderProgram::~ShaderProgram() {
   LOG(INFO) << "Deleting shader " << id_;
 }
 
-const UniformInfo& ShaderProgram::GetUniform(std::string_view name) const {
-  auto it = uniforms_.find(std::string(name));
-  if (it == uniforms_.end()) {
+namespace {
+
+GLint GetUniform(const std::unordered_map<std::string, UniformInfo>& uniforms,
+                 std::string_view name, GLenum type, GLsizei size) {
+  auto it = uniforms.find(std::string(name));
+  if (it == uniforms.end()) {
     throw util::NotFoundException(util::StrCat("uniform not found: ", name));
   }
-  return it->second;
+  if (it->second.size != size || it->second.type != type) {
+    throw util::InvalidArgumentException(
+        util::StrCat("uniform mismatched: ", name, ", size =", it->second.size,
+                     ", type = ", it->second.type));
+  }
+  return it->second.location;
+}
+
+}  // namespace
+
+void ShaderProgram::SetUniform(std::string_view name, glm::mat4 value) const {
+  GLint location = GetUniform(uniforms_, name, GL_FLOAT_MAT4, 1);
+  glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(value));
 }
 
 }  // namespace gl
